@@ -1,10 +1,13 @@
 import pyttsx3 
 import speech_recognition as sr
 import datetime
-import wikipedia 
+# import wikipedia 
 import webbrowser
-import os
 import smtplib
+import os
+import openai
+
+openai.api_key = "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"
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -60,11 +63,19 @@ if __name__ == "__main__":
     while flag == True:
         query = takeCommand().lower()
         if 'wikipedia' in query or 'what' in query:
-            speak('Searching Wikipedia...')
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
+            speak('Searching ...')
+            print("chatGpt")
+
+            question = query
+            completion=openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-0301",
+                messages=[
+                    {"role":"system","content":question}
+                ]
+            )
             speak("According to Wikipedia")
-            speak(results)
+            speak(completion.choices[0].message.content)
+
 
         elif 'open youtube' in query:
             webbrowser.open("youtube.com")
@@ -104,9 +115,9 @@ if __name__ == "__main__":
             
         elif 'play the song' in query:
             query = query.replace("play the song", "")
-            # print(query)
             webbrowser.open(f"https://www.youtube.com/results?search_query={query}")
 
         elif 'Zara stop' in query:
             flag = False    
+
 
